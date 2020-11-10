@@ -1,0 +1,43 @@
+---
+title: "p8105_hw5_ts3349"
+author: "Tessa Senders"
+date: "11/9/2020"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r load libraries}
+library(tidyverse)
+library(purrr)
+```
+
+
+## Problem 1
+
+
+```{r prob 1}
+
+```
+
+
+## Problem 2
+
+
+```{r prob 2}
+
+```
+
+
+## Problem 3
+
+
+```{r prob 3}
+```
+
+
+
+
+
