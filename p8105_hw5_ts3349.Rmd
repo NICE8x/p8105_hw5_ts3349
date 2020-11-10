@@ -18,21 +18,123 @@ library(purrr)
 ## Problem 1
 
 
-```{r prob 1}
+```{r prob 1 part 1}
+homicide_df =
+  read_csv("data/homicide-data.csv") %>%
+  mutate(
+    city_state = str_c(city, state, sep = "_"),
+    resolved = case_when(
+    disposition == "Closed without arrest" ~ "unsolved",
+    disposition == "Open/No arrest" ~ "unsolved",
+    disposition == "Closed by arrest" ~ "solved",
+  )
+) %>%
+  select(city_state, resolved) %>%
+  filter(city_state != "Tulsa_AL")
+```
 
+```{r prob 1 part 2}
+aggregate_df = homicide_df %>%
+  group_by(city_state) %>%
+  summarize(
+    hom_total = n(),
+    hom_unsolved = sum(resolved == "unsolved")
+  ) 
+```
+
+```{r prob 1 part 3}
+prop.test(
+  aggregate_df %>% filter(city_state == "Baltimore_MD") %>% pull(hom_unsolved),
+  aggregate_df %>% filter(city_state == "Baltimore_MD") %>% pull(hom_total)) %>%
+  broom::tidy()
+```
+
+```{r prob 1 part 4}
+results_df = aggregate_df %>%
+  mutate(
+    prop_tests = map2(.x = hom_unsolved, .y = hom_total, ~prop.test(x = .x, n = .y)),
+    tidy_tests = map(.x = prop_tests, ~broom::tidy(.x))
+  ) %>%
+  select(-prop_tests) %>%
+  unnest(tidy_tests) %>%
+  select(city_state, estimate, conf.low, conf.high) 
+
+results_df
+```
+
+```{r prob 1 part 5}
+results_df %>%
+  mutate(city_state = fct_reorder(city_state, estimate)) %>%
+  ggplot(aes(x = city_state, y = estimate)) +
+  geom_point() +
+  geom_errorbar(aes(ymin = conf.low, ymax = conf.high)) +
+  theme(axis.text = element_text(angle = 270, vjust = 0.5, hjust = 1))
 ```
 
 
 ## Problem 2
 
+Suggestions on how to solve from Jeff:
+Keep homicide data in one folder and longitudianl date in another folder.
+
+20 different csvs
+control: week 1-week 8
+
+
+Import one dataset:
+
+read_csv across all 20 paths
+have each stored in a df next to its path
+csv path, tibble from csv
+
+then mutate to see if people in control or not
+
+weeks in a column and observations next to them (need to pivot!)
+
+column (control or experimental), column (which week), column (what is observation value)-GOAL FOR FINAL TABLE
 
 ```{r prob 2}
+data_1 = read_csv("lda_data/con_01.csv")
 
+path_df = 
+tibble(
+path = list.files("lda_data") %>%
+  mutate(path = strd_c("lda_data/", path)),
+data = map(..........)
+)
+
+read.csv(path_df$path[[1]])
 ```
+
 
 
 ## Problem 3
 
+simulate a sampel from a normal distribution-sample size of 30 and variance of 5 but mean will keep changing
+
+for each mean-will generate 5000 datasets of sample size 30
+
+do not compute mean and sd
+
+exporting the results of a t test (is mean equal to 0?)
+
+reject or fail to reject the null 5% of the time
+
+for 6 hopefully larger percent
+
+figure out how to use t.test
+
+broom tidy to clean up t test results-get estimate and p value
+
+making two plots-summaries of p values and estimates based on whether significant or not
+
+estimated mean when true mean is 0
+
+then filter for results where p <0.05 then compute the mean-what does that look like?
+
+set.seed()
+
+always testing null mu=0
 
 ```{r prob 3}
 ```
