@@ -20,7 +20,7 @@ library(purrr)
 
 ```{r prob 1 part 1}
 homicide_df =
-  read_csv("data/homicide-data.csv") %>%
+  read_csv("homicide_data/homicide-data.csv") %>%
   mutate(
     city_state = str_c(city, state, sep = "_"),
     resolved = case_when(
@@ -32,6 +32,8 @@ homicide_df =
   select(city_state, resolved) %>%
   filter(city_state != "Tulsa_AL")
 ```
+
+The raw data regarding homicides in all 50 states in the USA comes from the Washington Post GitHub repository.  The data includes, the victim's name, race, and age.  The data also includes the city, the state, the latitude, and the longitude of the homicide and the disposition (whether the homicide is Closed by arrest, Open/No arrest, or Closed without arrest).  The data has `r nrow(homicide_df)` entries.
 
 ```{r prob 1 part 2}
 aggregate_df = homicide_df %>%
@@ -68,7 +70,12 @@ results_df %>%
   ggplot(aes(x = city_state, y = estimate)) +
   geom_point() +
   geom_errorbar(aes(ymin = conf.low, ymax = conf.high)) +
-  theme(axis.text = element_text(angle = 270, vjust = 0.5, hjust = 1))
+  theme(axis.text = element_text(angle = 270, vjust = 0.5, hjust = 1)) +
+  labs(
+    title = "Confidence Intervals for The Proportion of \n Unsolved Homicides in Various Cities",
+    x = "City and State",
+    y = "Proportion Estimate",
+    caption = "Data from the Washington Post GitHub")
 ```
 
 
@@ -93,7 +100,7 @@ weeks in a column and observations next to them (need to pivot!)
 
 column (control or experimental), column (which week), column (what is observation value)-GOAL FOR FINAL TABLE
 
-```{r prob 2}
+```{r prob 2 help from jeff}
 data_1 = read_csv("lda_data/con_01.csv")
 
 path_df = 
@@ -106,6 +113,21 @@ data = map(..........)
 read.csv(path_df$path[[1]])
 ```
 
+
+This zip file contains data from a longitudinal study that included a control arm and an experimental arm. Data for each participant is included in a separate file, and file names include the subject ID and arm.
+
+Create a tidy dataframe containing data from all participants, including the subject ID, arm, and observations over time:
+
+Start with a dataframe containing all file names; the list.files function will help
+Iterate over file names and read in data for each subject using purrr::map and saving the result as a new variable in the dataframe
+Tidy the result; manipulate file names to include control arm and subject ID, make sure weekly observations are “tidy”, and do any other tidying that’s necessary
+Make a spaghetti plot showing observations on each subject over time, and comment on differences between groups
+
+
+```{r prob 2 part 1}
+
+
+```
 
 
 ## Problem 3
