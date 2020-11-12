@@ -12,6 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r load libraries}
 library(tidyverse)
 library(purrr)
+library(stringr)
 ```
 
 
@@ -125,7 +126,28 @@ Make a spaghetti plot showing observations on each subject over time, and commen
 
 
 ```{r prob 2 part 1}
+path_df = 
+tibble(
+path = list.files("lda_data"))
 
+path_df = path_df %>%
+  mutate(
+    path = str_c("lda_data/", path),
+    data = map(.x = path, ~read_csv(.x))
+) %>%
+  unnest(data) %>%
+  pivot_longer(
+    week_1:week_8,
+    names_to = "week",
+    values_to = "observation"
+  ) %>%
+  mutate(
+    week = as.numeric(str_replace(week, "week_", "")),
+    arm = str_extract(path, "/[a-z][a-z][a-z]"),
+    arm = str_remove(arm, "/"),
+    id = str_extract(path, "[0-9]+")
+  ) %>%
+  select(-path)
 
 ```
 
