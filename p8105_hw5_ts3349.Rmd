@@ -115,16 +115,6 @@ read.csv(path_df$path[[1]])
 ```
 
 
-This zip file contains data from a longitudinal study that included a control arm and an experimental arm. Data for each participant is included in a separate file, and file names include the subject ID and arm.
-
-Create a tidy dataframe containing data from all participants, including the subject ID, arm, and observations over time:
-
-Start with a dataframe containing all file names; the list.files function will help
-Iterate over file names and read in data for each subject using purrr::map and saving the result as a new variable in the dataframe
-Tidy the result; manipulate file names to include control arm and subject ID, make sure weekly observations are “tidy”, and do any other tidying that’s necessary
-Make a spaghetti plot showing observations on each subject over time, and comment on differences between groups
-
-
 ```{r prob 2 part 1}
 path_df = 
 tibble(
@@ -150,6 +140,20 @@ path_df = path_df %>%
   select(-path)
 
 ```
+
+Make a spaghetti plot showing observations on each subject over time, and comment on differences between groups
+
+```{r prob 2 plot}
+ path_df %>% ggplot(aes(x = week, y = observation, color = id)) +
+  geom_line() +
+  #theme(axis.text = element_text(angle = 270, vjust = 0.5, hjust = 1)) +
+  labs(
+    title = "Observations for Each Subject Over 8 Weeks",
+    x = "Week Number",
+    y = "Observation Value",
+    caption = "Data from a longitudinal study that included \n a control arm and an experimental arm. \n  ID # 01-05 are the control arm and \n ID # 06-10 are the experimental arm.")
+```
+
 
 
 ## Problem 3
@@ -182,6 +186,43 @@ always testing null mu=0
 
 ```{r prob 3}
 ```
+
+First set the following design elements:
+
+Fix n=30
+Fix σ=5
+Set μ=0. Generate 5000 datasets from the model
+
+x∼Normal[μ,σ]
+
+For each dataset, save μ^ and the p-value arising from a test of H:μ=0 using α=0.05. Hint: to obtain the estimate and p-value, use broom::tidy to clean the output of t.test.
+
+
+```{r prob 3 part 1}
+sim_datasets = function(mu) {
+  
+    x = rnorm(n = 30, mean = mu, sd = 5)
+  
+  t.test(x = x, mu = 0, alternative = "two.sided") %>% 
+    broom::tidy() %>% select(estimate, p.value)
+  
+  
+           
+}
+
+
+sim_results = tibble(
+  mu = c(0, 1, 2, 3, 4, 5, 6) 
+  ) %>%
+  mutate(output_lists = map(.x = mu, ~rerun(5000, sim_datasets(mu = .x)))
+         ) %>%
+  unnest(output_lists) %>%
+  unnest(output_lists)
+
+#View(sim_results)
+```
+
+
 
 
 
