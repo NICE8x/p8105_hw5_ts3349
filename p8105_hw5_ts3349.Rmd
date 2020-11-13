@@ -199,6 +199,8 @@ For each dataset, save μ^ and the p-value arising from a test of H:μ=0 using �
 
 
 ```{r prob 3 part 1}
+set.seed(1)
+
 sim_datasets = function(mu) {
   
     x = rnorm(n = 30, mean = mu, sd = 5)
@@ -217,11 +219,32 @@ sim_results = tibble(
   mutate(output_lists = map(.x = mu, ~rerun(5000, sim_datasets(mu = .x)))
          ) %>%
   unnest(output_lists) %>%
-  unnest(output_lists)
+  unnest(output_lists) %>%
+  mutate(reject_null = if_else(p.value < 0.05, 1, 0))
 
 #View(sim_results)
 ```
 
+Make a plot showing the proportion of times the null was rejected (the power of the test) on the y axis and the true value of μ on the x axis. Describe the association between effect size and power.
+
+Make a plot showing the average estimate of μ^ on the y axis and the true value of μ on the x axis. Make a second plot (or overlay on the first) the average estimate of μ^ only in samples for which the null was rejected on the y axis and the true value of μ on the x axis. Is the sample average of μ^ across tests for which the null is rejected approximately equal to the true value of μ? Why or why not?
+
+
+```{r prob 3 plot 1}
+sim_results %>% 
+  group_by(mu) %>%
+  summarize(prop_reject = sum(reject_null)/5000) %>%
+  ggplot(aes(x = mu, y = prop_reject)) +
+  geom_line() +
+  #theme(axis.text = element_text(angle = 270, vjust = 0.5, hjust = 1)) +
+  labs(
+    title = "The Proportion of Times the Null was Rejected for Each mu",
+    x = "mu",
+    y = "Proportion of Times the Null was Rejected",
+    caption = "Data is the result of generating 5000 datasets \n from a normal distribution with a sample size of 30 \n and standard deviation of 5 for each of 7 different mu values (0-6).")
+```
+
+As the effect size increases, the power increases.  Since the standard deviation is the same for the datasets for each mu, the only part of the effect size that is changing is the difference between the actual mu and the null mu.  As the difference between the null mu (0) and the actual mu, the power also increases.
 
 
 
