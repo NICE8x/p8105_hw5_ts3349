@@ -154,7 +154,7 @@ Make a spaghetti plot showing observations on each subject over time, and commen
     caption = "Data from a longitudinal study that included \n a control arm and an experimental arm. \n  ID # 01-05 are the control arm and \n ID # 06-10 are the experimental arm.")
 ```
 
-
+COMMENT ON THIS HERE!
 
 ## Problem 3
 
@@ -227,7 +227,7 @@ sim_results = tibble(
 
 Make a plot showing the proportion of times the null was rejected (the power of the test) on the y axis and the true value of μ on the x axis. Describe the association between effect size and power.
 
-Make a plot showing the average estimate of μ^ on the y axis and the true value of μ on the x axis. Make a second plot (or overlay on the first) the average estimate of μ^ only in samples for which the null was rejected on the y axis and the true value of μ on the x axis. Is the sample average of μ^ across tests for which the null is rejected approximately equal to the true value of μ? Why or why not?
+
 
 
 ```{r prob 3 plot 1}
@@ -246,6 +246,51 @@ sim_results %>%
 
 As the effect size increases, the power increases.  Since the standard deviation is the same for the datasets for each mu, the only part of the effect size that is changing is the difference between the actual mu and the null mu.  As the difference between the null mu (0) and the actual mu, the power also increases.
 
+
+Make a plot showing the average estimate of μ^ on the y axis and the true value of μ on the x axis. 
+
+Is the sample average of μ^ across tests for which the null is rejected approximately equal to the true value of μ? Why or why not?
+
+
+```{r prob 3 plot 2}
+avg_vs_true_plot = sim_results %>% 
+  group_by(mu) %>%
+  summarize(mean_mu_hat = mean(estimate)) %>%
+  ggplot(aes(x = mu, y = mean_mu_hat)) +
+  geom_line() +
+  #theme(axis.text = element_text(angle = 270, vjust = 0.5, hjust = 1)) +
+  labs(
+    title = "The Average Estimate of mu versus the True Value of mu",
+    x = "True Value of mu",
+    y = "Average Estimate of mu",
+    caption = "Data is the result of generating 5000 datasets \n from a normal distribution with a sample size of 30 \n and standard deviation of 5 for each of 7 different mu values (0-6).")
+```
+
+Make a second plot (or overlay on the first) the average estimate of μ^ only in samples for which the null was rejected on the y axis and the true value of μ on the x axis.
+
+```{r prob 3 plot 3}
+avg_rejected_vs_true_plot = sim_results %>% 
+  filter(reject_null == 1) %>%
+  group_by(mu) %>%
+  summarize(mean_mu_hat = mean(estimate)) %>%
+  ggplot(aes(x = mu, y = mean_mu_hat)) +
+  geom_line() +
+  #theme(axis.text = element_text(angle = 270, vjust = 0.5, hjust = 1)) +
+  labs(
+    title = "The Average Estimate of mu \n (only for samples which the null was rejected) \n versus the True Value of mu",
+    x = "True Value of mu",
+    y = "Average Estimate of mu \n (only for samples which the null was rejected)",
+    caption = "Data is the result of generating 5000 datasets \n from a normal distribution with a sample size of 30 \n and standard deviation of 5 for each of 7 different mu values (0-6).")
+```
+
+```{r prob 3 plots combined}
+avg_vs_true_plot
+avg_rejected_vs_true_plot
+```
+
+Is the sample average of μ^ across tests for which the null is rejected approximately equal to the true value of μ? Why or why not?
+
+The sample average mu across tests for which the null is rejected is approximately equal to the true value of mu because when the null (mu = 0) is rejected that means the estimate is closer to the true mu (except for when the true mu is 0).
 
 
 
