@@ -144,7 +144,7 @@ path_df = path_df %>%
 Make a spaghetti plot showing observations on each subject over time, and comment on differences between groups
 
 ```{r prob 2 plot}
- path_df %>% ggplot(aes(x = week, y = observation, color = id)) +
+ path_df %>% ggplot(aes(x = week, y = observation, color = id, linetype = arm)) +
   geom_line() +
   #theme(axis.text = element_text(angle = 270, vjust = 0.5, hjust = 1)) +
   labs(
@@ -153,7 +153,7 @@ Make a spaghetti plot showing observations on each subject over time, and commen
     y = "Observation Value",
     caption = "Data from a longitudinal study that included \n a control arm and an experimental arm. \n  ID # 01-05 are the control arm and \n ID # 06-10 are the experimental arm.")
 ```
-
+Experimental tends to have higher ldl over time than control.
 COMMENT ON THIS HERE!
 
 ## Problem 3
@@ -244,7 +244,7 @@ sim_results %>%
     caption = "Data is the result of generating 5000 datasets \n from a normal distribution with a sample size of 30 \n and standard deviation of 5 for each of 7 different mu values (0-6).")
 ```
 
-As the effect size increases, the power increases.  Since the standard deviation is the same for the datasets for each mu, the only part of the effect size that is changing is the difference between the actual mu and the null mu.  As the difference between the null mu (0) and the actual mu, the power also increases.
+As the effect size increases, the power increases.  Since the standard deviation is the same for the datasets for each mu, the only part of the effect size that is changing is the difference between the actual mu and the null mu.  As the difference between the null mu (0) and the actual mu increases, the power also increases.
 
 
 Make a plot showing the average estimate of μ^ on the y axis and the true value of μ on the x axis. 
